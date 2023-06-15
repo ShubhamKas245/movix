@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import "./App.css";
 import { fetchDataFromMovieDB } from "./utils/api";
 import { useDispatch, useSelector } from "react-redux";
-import { getApiConfiguration } from "./store/homeSlice";
+import { getApiConfiguration, getGenres } from "./store/homeSlice";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Details from "./pages/details/Details";
 import Explore from "./pages/explore/Explore";
@@ -27,8 +27,25 @@ function App() {
     dispatch(getApiConfiguration(url));
   }
 
+  const genresCall=async()=>{
+    let promises=[];
+    let endPoint=["tv","movie"];
+    let allGenres={}
+
+    endPoint.forEach((url)=>{
+      promises.push(fetchDataFromMovieDB(`/genre/${url}/list`))
+    })
+    const data=await Promise.all(promises);
+    console.log(data)
+    data.map(({genres})=>{
+      return genres.map((item)=> (allGenres[item.id]=item))
+    })
+    dispatch(getGenres(allGenres))
+  }
+
   useEffect(() => {
     fetchApiConfig();
+    genresCall();
   }, []);
 
   return (

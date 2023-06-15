@@ -12,10 +12,13 @@ const HeroBanner = () => {
 
   const navigate = useNavigate();
 
+  // Redux selector to get the URL configuration
   const { url } = useSelector((state) => state.home);
 
+  // Custom hook for fetching upcoming movies
   const { data, loading } = useFetch("/movie/upcoming");
 
+  // Set a random backdrop image from the fetched data
   useEffect(() => {
     const bg =
       url.backdrop +
@@ -23,6 +26,7 @@ const HeroBanner = () => {
     setBackground(bg);
   }, [data]);
 
+  // Handle search query input and navigation
   const searchQueryHandler = (e) => {
     if (e.key === "Enter" && query.length > 0) {
       navigate(`/search/${query}`);
@@ -35,9 +39,7 @@ const HeroBanner = () => {
           <LazyLoadImg src={background} />
         </div>
       )}
-      <div className="opacity-layer">
-        
-      </div>
+      <div className="opacity-layer"></div>
       <ContentWrapper>
         <div className="heroBannerContent">
           <span className="title">Welcome</span>

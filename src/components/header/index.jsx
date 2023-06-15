@@ -16,10 +16,12 @@ const Header = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
+  // Scroll to top when the location changes
   useEffect(()=>{
     window.scrollTo(0,0)
   },[location])
 
+  // Control the navbar visibility based on the scroll position
   const controlNavabar = () => {
     if (window.scrollY > 200) {
       if (window.scrollY > lastScrollY && !mobileMenu) {
@@ -34,20 +36,27 @@ const Header = () => {
   };
 
   useEffect(() => {
+     // Add scroll event listener on component mount
     window.addEventListener("scroll", controlNavabar);
+     // Clean up by removing the event listener on component unmount
     return () => {
       window.removeEventListener("scroll", controlNavabar);
     };
   }, [lastScrollY]);
 
+   // Open search bar
   const openSearch = () => {
     setMobileMenu(false);
     setShowSearch(true);
   };
+
+   // Open mobile menu
   const openMobileMenu = () => {
     setMobileMenu(true);
     setShowSearch(false);
   };
+
+   // Handle search query input and navigation
   const searchQueryHandler = (e) => {
     if (e.key === "Enter" && query.length > 0) {
       navigate(`/search/${query}`);
@@ -57,6 +66,7 @@ const Header = () => {
     }
   };
 
+  // Handle navigation to different sections
   const navigationHandler = (type) => {
     if (type === "movie") {
       navigate("/explore/movie");
