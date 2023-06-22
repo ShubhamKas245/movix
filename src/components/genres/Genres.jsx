@@ -3,9 +3,18 @@ import "./style.scss";
 
 
 const Genres = ({data}) => {
-    const {genre}=useSelector((state)=>state.home)
+    const {genres}=useSelector((state)=>state.home)
   return (
-    <div className="genres">Genres</div>
+    <div className="genres">
+      {data?.map((g)=>{
+        if(!genres[g]?.name) return;
+        return (
+          <div className="genre" key={g}>
+            {genres[g]?.name}
+          </div>
+        )
+      })}
+    </div>
   )
 }
 
