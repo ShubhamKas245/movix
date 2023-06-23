@@ -11,8 +11,13 @@ import Genres from "../../../components/genres/Genres";
 import CircleRating from "../../../components/circularRating/CircularRating";
 import PosterFallback from "../../../assets/no-poster.png";
 import { PlayIcon } from "./PlayBtn";
+import { useState } from "react";
+import VideoPopup from "../../../components/videoPopup/VideoPopUp";
 
 const DetailsBanner = ({ video, crew }) => {
+  const [show, setShow] = useState(false);
+  const [videoId, setVideoId] = useState(null);
+
   const { mediaType, id } = useParams();
   const { loading, data } = useFetch(`/${mediaType}/${id}`);
 
@@ -41,104 +46,112 @@ const DetailsBanner = ({ video, crew }) => {
                 <Img src={url.backdrop + data.backdrop_path} />
               </div>
               <div className="opacity-layer"></div>
-              <div className="content">
-                <div className="left">
-                  {data.poster_path ? (
-                    <Img
-                      className="posterImg"
-                      src={url.backdrop + data.backdrop_path}
-                    />
-                  ) : (
-                    <Img className="posterImg" src={PosterFallback} />
-                  )}
-                </div>
-                <div className="right">
-                  <div className="title">
-                    {`${data?.name || data?.title} (${dayjs(
-                      data?.release_date
-                    ).format("YYYY")})`}
-                  </div>
-                  <div className="subtitle">{data?.tagline}</div>
-                  <Genres data={_genre} />
-                  <div className="row">
-                    <CircleRating rating={data?.vote_average.toFixed(1)} />
-                    <div className="playbtn">
-                      <PlayIcon />
-                      <span className="text">Watch Trailer</span>
-                    </div>
-                  </div>
-                  <div className="overview">
-                    <div className="heading">Overview</div>
-                    <div className="description">{data?.overview}</div>
-                  </div>
-                  <div className="info">
-                    {data?.status && (
-                      <div className="infoItem">
-                        <span className="text bold">Status : </span>
-                        <span className="text">{data?.status}</span>
-                      </div>
+              <ContentWrapper>
+                <div className="content">
+                  <div className="left">
+                    {data.poster_path ? (
+                      <Img
+                        className="posterImg"
+                        src={url.backdrop + data.backdrop_path}
+                      />
+                    ) : (
+                      <Img className="posterImg" src={PosterFallback} />
                     )}
-                    {data?.release_date && (
-                      <div className="infoItem">
-                        <span className="text bold">Release Date : </span>
+                  </div>
+                  <div className="right">
+                    <div className="title">
+                      {`${data?.name || data?.title} (${dayjs(
+                        data?.release_date
+                      ).format("YYYY")})`}
+                    </div>
+                    <div className="subtitle">{data?.tagline}</div>
+                    <Genres data={_genre} />
+                    <div className="row">
+                      <CircleRating rating={data?.vote_average.toFixed(1)} />
+                      <div
+                        className="playbtn"
+                        onClick={() => {
+                          setShow(true);
+                          setVideoId(video.key);
+                        }}
+                      >
+                        <PlayIcon />
+                        <span className="text">Watch Trailer</span>
+                      </div>
+                    </div>
+                    <div className="overview">
+                      <div className="heading">Overview</div>
+                      <div className="description">{data?.overview}</div>
+                    </div>
+                    <div className="info">
+                      {data?.status && (
+                        <div className="infoItem">
+                          <span className="text bold">Status : </span>
+                          <span className="text">{data?.status}</span>
+                        </div>
+                      )}
+                      {data?.release_date && (
+                        <div className="infoItem">
+                          <span className="text bold">Release Date : </span>
+                          <span className="text">
+                            {dayjs(data?.release_date).format("MMM D, YYYY")}
+                          </span>
+                        </div>
+                      )}
+                      {data?.runtime && (
+                        <div className="infoItem">
+                          <span className="text bold">Runtime : </span>
+                          <span className="text">
+                            {toHoursAndMinutes(data?.runtime)}
+                          </span>
+                        </div>
+                      )}
+                    </div>
+                    {director?.length > 0 && (
+                      <div className="info">
+                        <span className="text bold">Director : </span>
                         <span className="text">
-                          {dayjs(data?.release_date).format("MMM D, YYYY")}
+                          {director?.map((d, i) => (
+                            <span key={i}>
+                              {d.name} {director.length - 1 !== i && ", "}
+                            </span>
+                          ))}
                         </span>
                       </div>
                     )}
-                    {data?.runtime && (
-                      <div className="infoItem">
-                        <span className="text bold">Runtime : </span>
+                    {writer?.length > 0 && (
+                      <div className="info">
+                        <span className="text bold">Writer : </span>
                         <span className="text">
-                          {toHoursAndMinutes(data?.runtime)}
+                          {writer?.map((d, i) => (
+                            <span key={i}>
+                              {d.name} {writer.length - 1 !== i && ", "}
+                            </span>
+                          ))}
+                        </span>
+                      </div>
+                    )}
+                    {data?.created_by?.length > 0 && (
+                      <div className="info">
+                        <span className="text bold">Creator : </span>
+                        <span className="text">
+                          {data?.created_by?.map((d, i) => (
+                            <span key={i}>
+                              {d.name} {data.length - 1 !== i && ", "}
+                            </span>
+                          ))}
                         </span>
                       </div>
                     )}
                   </div>
-                  {director?.length > 0 && (
-                    <div className="info">
-                      <span className="text bold">
-                        Director : { " "}
-                      </span>
-                      <span className="text">
-                        {director?.map((d,i)=>(
-                          <span key={i}>
-                            {d.name} {director.length -1 !== i && ", "}
-                          </span>
-                        ))}
-                      </span>
-                    </div>
-                  )}
-                  {writer?.length > 0 && (
-                    <div className="info">
-                      <span className="text bold">
-                        Writer : { " "}
-                      </span>
-                      <span className="text">
-                        {writer?.map((d,i)=>(
-                          <span key={i}>
-                            {d.name} {writer.length -1 !== i && ", "}
-                          </span>
-                        ))}
-                      </span>
-                    </div>
-                  )}
-                      {data?.created_by?.length > 0 && (
-                    <div className="info">
-                      <span className="text bold">
-                        Creator : { " "}
-                      </span>
-                      <span className="text">
-                        {data?.created_by?.map((d,i)=>(
-                          <span key={i}>
-                            {d.name} {data.length -1 !== i && ", "}
-                          </span>
-                        ))}
-                      </span>
-                    </div>
-                  )}
                 </div>
-              </div>
+                <VideoPopup
+                  show={show}
+                  setShow={setShow}
+                  videoId={videoId}
+                  setVideoId={setVideoId}
+                />
+              </ContentWrapper>
             </>
           )}
         </>
