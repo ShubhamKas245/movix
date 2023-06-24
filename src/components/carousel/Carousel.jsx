@@ -15,7 +15,7 @@ import Shimmer from "../lazyLoading/Shimmer";
 import CircleRating from "../circularRating/CircularRating";
 import Genres from "../genres/Genres";
 
-const Carousel = ({ data, loading,endPoint }) => {
+const Carousel = ({ data, loading,endPoint,title }) => {
   // useRef hook to access the carousel container
   const carouselContainer = useRef();
 
@@ -41,6 +41,7 @@ const Carousel = ({ data, loading,endPoint }) => {
   return (
     <div className="carousel">
       <ContentWrapper>
+        {title && <div className="carouselTitle">{title}</div>}
         {/* Left navigation arrow */}
         <BsFillArrowLeftCircleFill
           className="carouselLeftNav arrow"
